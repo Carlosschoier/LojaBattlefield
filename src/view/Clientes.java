@@ -12,7 +12,7 @@ import java.util.List;
 public class Clientes extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Clientes.class.getName());
-
+    private int idClienteEditando = -1;
     /**
      * Creates new form Clientes
      */
@@ -42,6 +42,7 @@ public class Clientes extends javax.swing.JFrame {
         btnVoltar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblTabelaClientes = new javax.swing.JTable();
+        btnEditar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -86,6 +87,10 @@ public class Clientes extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(tblTabelaClientes);
 
+        btnEditar.setFont(new java.awt.Font("Liberation Sans", 3, 18)); // NOI18N
+        btnEditar.setText("EDITAR");
+        btnEditar.addActionListener(this::btnEditarActionPerformed);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -110,19 +115,19 @@ public class Clientes extends javax.swing.JFrame {
                         .addComponent(btnVoltar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 27, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(btnCadastrar)
+                        .addGap(113, 113, 113))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnLimpar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(31, 31, 31)
-                                .addComponent(btnExcluir, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(102, 102, 102)
-                                .addComponent(btnCadastrar)))
-                        .addGap(55, 55, 55))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 319, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, Short.MAX_VALUE))
+                                .addComponent(btnLimpar, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnEditar, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnExcluir, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(33, 33, 33))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -142,15 +147,19 @@ public class Clientes extends javax.swing.JFrame {
                             .addComponent(lblSenha)
                             .addComponent(txtSenha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnLimpar)
+                    .addComponent(btnEditar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnExcluir))
-                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnVoltar)
-                    .addComponent(btnCadastrar))
-                .addGap(18, 18, 18))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(8, 8, 8)
+                        .addComponent(btnVoltar))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(btnCadastrar)))
+                .addGap(8, 8, 8))
         );
 
         pack();
@@ -218,37 +227,57 @@ public class Clientes extends javax.swing.JFrame {
 
     private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
         // TODO add your handling code here:
+                    
         String nome = txtNome.getText().trim();
     String email = txtEmail.getText().trim();
     String senha = new String(txtSenha.getPassword());
 
     if (nome.isEmpty() || email.isEmpty() || senha.isEmpty()) {
-
         JOptionPane.showMessageDialog(
                 this,
                 "Preencha todos os campos."
         );
-
         return;
     }
 
     try {
 
-        Cliente cliente = new Cliente(
-                0,
-                nome,
-                email,
-                senha
-        );
-
         ClienteDAO dao = new ClienteDAO();
 
-        dao.cadastrar(cliente);
+        if (idClienteEditando != -1) {
 
-        JOptionPane.showMessageDialog(
-                this,
-                "Cliente cadastrado com sucesso!"
-        );
+            Cliente cliente = new Cliente(
+                    idClienteEditando,
+                    nome,
+                    email,
+                    senha
+            );
+
+            dao.alterar(cliente);
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Cliente alterado com sucesso!"
+            );
+
+            idClienteEditando = -1;
+
+        } else {
+
+            Cliente cliente = new Cliente(
+                    0,
+                    nome,
+                    email,
+                    senha
+            );
+
+            dao.cadastrar(cliente);
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Cliente cadastrado com sucesso!"
+            );
+        }
 
         txtNome.setText("");
         txtEmail.setText("");
@@ -260,7 +289,7 @@ public class Clientes extends javax.swing.JFrame {
 
         JOptionPane.showMessageDialog(
                 this,
-                "Erro ao cadastrar cliente:\n"
+                "Erro ao salvar cliente:\n"
                 + e.getMessage()
         );
     }
@@ -268,9 +297,11 @@ public class Clientes extends javax.swing.JFrame {
 
     private void btnLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimparActionPerformed
         // TODO add your handling code here
-        txtNome.setText("");
+    txtNome.setText("");
     txtEmail.setText("");
     txtSenha.setText("");
+
+    idClienteEditando = -1;
 
     txtNome.requestFocus();
     }//GEN-LAST:event_btnLimparActionPerformed
@@ -287,6 +318,35 @@ public class Clientes extends javax.swing.JFrame {
 
     this.dispose();
     }//GEN-LAST:event_btnVoltarActionPerformed
+
+    private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
+        // TODO add your handling code here:
+    int linha = tblTabelaClientes.getSelectedRow();
+
+    if (linha == -1) {
+        JOptionPane.showMessageDialog(
+                this,
+                "Selecione um cliente para editar."
+        );
+        return;
+    }
+
+    idClienteEditando = Integer.parseInt(
+            tblTabelaClientes.getValueAt(linha, 0).toString()
+    );
+
+    String nome = tblTabelaClientes.getValueAt(linha, 1).toString();
+    String email = tblTabelaClientes.getValueAt(linha, 2).toString();
+
+    txtNome.setText(nome);
+    txtEmail.setText(email);
+    txtSenha.setText("");
+
+    JOptionPane.showMessageDialog(
+            this,
+            "Altere os dados do cliente e clique em CADASTRAR para salvar."
+    );
+    }//GEN-LAST:event_btnEditarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -315,6 +375,7 @@ public class Clientes extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCadastrar;
+    private javax.swing.JButton btnEditar;
     private javax.swing.JButton btnExcluir;
     private javax.swing.JButton btnLimpar;
     private javax.swing.JButton btnVoltar;

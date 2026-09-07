@@ -67,6 +67,30 @@ public class ClienteDAO {
         return clientes;
     }
 
+    // ================= ALTERAR =================
+
+    public void alterar(Cliente cliente) throws SQLException {
+
+        String sql = """
+                UPDATE cliente
+                SET nome = ?,
+                    email = ?,
+                    senha = ?
+                WHERE id_cliente = ?
+                """;
+
+        try (Connection conexao = Conexao.conectar();
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
+
+            stmt.setString(1, cliente.getNome());
+            stmt.setString(2, cliente.getEmail());
+            stmt.setString(3, cliente.getSenha());
+            stmt.setInt(4, cliente.getId());
+
+            stmt.executeUpdate();
+        }
+    }
+
     // ================= EXCLUIR =================
 
     public void excluir(int id) throws SQLException {

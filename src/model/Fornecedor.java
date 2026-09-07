@@ -23,10 +23,6 @@ public class Fornecedor {
         this.email = email;
     }
 
-    public Fornecedor() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
     // ================= GETTERS E SETTERS =================
 
     public int getId() {
@@ -78,9 +74,5 @@ public class Fornecedor {
         System.out.println("CNPJ: " + cnpj);
         System.out.println("Telefone: " + telefone);
         System.out.println("E-mail: " + email);
-    }  
-
-    public void setVisible(boolean b) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
